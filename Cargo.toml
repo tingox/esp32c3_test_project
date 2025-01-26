@@ -1,0 +1,57 @@
+[package]
+edition = "2021"
+name    = "test_project"
+version = "0.1.0"
+
+[[bin]]
+name = "test_project"
+path = "./src/bin/main.rs"
+
+[dependencies]
+critical-section = "1.2.0"
+esp-backtrace = { version = "0.15.0", features = [
+  "esp32c3",
+  "exception-handler",
+  "panic-handler",
+  "println",
+] }
+#esp-hal = { version = "0.23.1", features = ["esp32c3", "unstable"] }
+esp-hal = { version = "0.22.0", features = ["esp32c3"] }
+esp-println = { version = "0.13.0", features = ["esp32c3", "log"] }
+log = { version = "0.4.21" }
+cfg-if = "1.0.0"
+defmt             = { version = "0.3.10", optional = true }
+esp-hal-smartled = "0.14.0"
+smart-leds = "0.4.0"
+
+[profile.dev]
+# Rust debug is too slow.
+# For debug builds always builds with some optimization
+opt-level = "s"
+
+[profile.release]
+codegen-units    = 1     # LLVM can perform better optimizations using a single thread
+debug            = 2
+debug-assertions = false
+incremental      = false
+lto              = 'fat'
+opt-level        = 's'
+overflow-checks  = false
+
+[features]
+## Implement `defmt::Format` on certain types.
+defmt = ["dep:defmt", "esp-hal/defmt"]
+
+#! ### Chip Support Feature Flags
+## Target the ESP32.
+esp32 = ["esp-backtrace/esp32", "esp-hal/esp32", "esp-println/esp32"]
+## Target the ESP32-C3.
+esp32c3 = ["esp-backtrace/esp32c3", "esp-hal/esp32c3", "esp-println/esp32c3"]
+## Target the ESP32-C6.
+esp32c6 = ["esp-backtrace/esp32c6", "esp-hal/esp32c6", "esp-println/esp32c6"]
+## Target the ESP32-H2.
+esp32h2 = ["esp-backtrace/esp32h2", "esp-hal/esp32h2", "esp-println/esp32h2"]
+## Target the ESP32-S2.
+esp32s2 = ["esp-backtrace/esp32s2", "esp-hal/esp32s2", "esp-println/esp32s2"]
+## Target the ESP32-S3.
+esp32s3 = ["esp-backtrace/esp32s3", "esp-hal/esp32s3", "esp-println/esp32s3"]
